@@ -23,7 +23,7 @@ CRGB ledsthree[NUM_LEDS];
 CRGB ledsfour[NUM_LEDS];
 
 void setup() {
-	pinMode(LED, OUTPUT);
+    pinMode(LED, OUTPUT);
     digitalWrite(LED, HIGH);   // set the LED on
     Serial.begin(115200); 
       
@@ -33,13 +33,13 @@ void setup() {
     FastLED.addLeds<WS2801, 3, 1, RGB, DATA_RATE_MHZ(3)>(ledsfour, NUM_LEDS); //4
       
     for(int wipe = 0; wipe <500; wipe++) {
-		r = 0; g = 0xFF; b =0;
-		leds[wipe] = 0x110000;       //2
-		ledstwo[wipe] = 0x001100;    //3
-		ledsthree[wipe] = 0x000011;  //4
-		ledsfour[wipe] = 0x110011;   //1
-		}
-	FastLED.show();
+    	    r = 0; g = 0xFF; b =0;
+	    leds[wipe] = 0x110000;       //2
+	    ledstwo[wipe] = 0x001100;    //3
+	    ledsthree[wipe] = 0x000011;  //4
+	    ledsfour[wipe] = 0x110011;   //1
+	    }
+	    FastLED.show();
 }
 
 void loop() {
@@ -163,7 +163,7 @@ uint32_t Wheel(byte WheelPos)  {
 		WheelPos -= 85;
 		return Color(255 - WheelPos * 3, 0, WheelPos * 3);
 		} 
-	else {
+	else 	{
 		WheelPos -= 170; 
 		return Color(0, WheelPos * 3, 255 - WheelPos * 3);
 		}
@@ -178,4 +178,3 @@ uint32_t Color(byte r, byte g, byte b)  {
 	c |= b;
 	return c;
 	}
-  

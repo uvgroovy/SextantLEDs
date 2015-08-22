@@ -2,8 +2,8 @@
 
 #define ARRAY_SIZE(x) (sizeof(x)/sizeof(x[0]))
 
-#define PARTY_TYPE 0    //relax color wheel fade
-//#define PARTY_TYPE 1  //sparkle party!
+// #define PARTY_TYPE 0    //relax color wheel fade
+#define PARTY_TYPE 1  //sparkle party!
 
 
 #define LEDS_PER_CHANNEL 500     //per channel  
@@ -29,6 +29,10 @@ inline void colorSet(byte channel, int index, CRGB color) {
   channels[channel][index] = color;
 }
 
+inline bool maybeHasSerialHeader() {
+  return Serial.available() >= 3;
+}
+
 void setup() {
   pinMode(LED, OUTPUT);
   Serial.begin(115200);
@@ -50,7 +54,7 @@ void setup() {
 
 
 bool syncSerial() {
-  while (Serial.available() >= 3) {
+  while (maybeHasSerialHeader()) {
     int byteRead = Serial.read();
     if (byteRead != 'A') {
       continue;
@@ -63,7 +67,7 @@ bool syncSerial() {
     if (byteRead != 'a') {
       continue;
     }
-    
+
     Serial.print("Ada\n"); // Send ACK string to host, compatible with older adavision hosts
     return true;
   }
@@ -93,6 +97,7 @@ void readLedsFromSerial() {
       for (int timeout = 0; (Serial.available() < 3) && (timeout < 10); ++timeout) {
         delay(10);
       }
+      // enough to read the LEDs
       if (Serial.available() < 3)  {
         return;
       }
@@ -117,15 +122,17 @@ void loop() {
 }
 
 void readSerialAndShow() {
-    readMetaData();
-    readLedsFromSerial();
-    FastLED.show();
-    
+  readMetaData();
+  readLedsFromSerial();
+  FastLED.show();
+
 }
 
 void party_wheel() {
+
+#if PARTY_TYPE == 0
   for (int i = 0; i < 256; i++) {   // 3 cycles of all 256 colors in the wheel
-    if (Serial.available() >= 3) {
+    if (maybeHasSerialHeader()) {
       return;
     }
 
@@ -140,6 +147,34 @@ void party_wheel() {
     delay(10);
 
   }
+#else
+  const int sparx_count = 100;
+  for (int j = 0; j < 256; j++) {   // 3 cycles of all 256 colors in the wheel
+    for (int x = 0; x < sparx_count; x++) {
+      for (int k = 0; k < NUM_CHANNELS; k++) {
+        channels[k][random(LEDS_PER_CHANNEL)] = wheel(j);
+      }
+    }
+    if (maybeHasSerialHeader()) {
+      return;
+    }
+    FastLED.show();
+    delay(10);
+
+    for (int x = 0; x < LEDS_PER_CHANNEL; x++) {
+      for (int k = 0; k < NUM_CHANNELS; k++) {
+        channels[k][x] = 0x000000;
+      }
+    }
+    if (maybeHasSerialHeader()) {
+      return;
+    }
+
+    FastLED.show();
+    delay(10);
+
+  }
+#endif
 }
 
 
@@ -155,4 +190,5 @@ CRGB wheel(byte WheelPos)  {
     WheelPos -= 170;
     return color(0, WheelPos * 3, 255 - WheelPos * 3);
   }
+
 }

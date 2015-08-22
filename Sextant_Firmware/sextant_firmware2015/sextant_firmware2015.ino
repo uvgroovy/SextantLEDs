@@ -68,26 +68,6 @@ bool syncSerial() {
     return true;
   }
   return false;
-
-  /// old code
-
-  int byteRead = -1;
-
-  byteRead = Serial.read();
-  if (byteRead != 'A') {
-    return false;
-  }
-  byteRead = Serial.read();
-  if (byteRead != 'd') {
-    return false;
-  }
-  byteRead = Serial.read();
-  if (byteRead != 'a') {
-    return false;
-  }
-
-  Serial.print("Ada\n"); // Send ACK string to host, compatible with older adavision hosts
-  return true;
 }
 
 void readMetaData() {
@@ -130,20 +110,24 @@ void readLedsFromSerial() {
 void loop() {
   // put your main code here, to run repeatedly:
   if (syncSerial()) {
-    readMetaData();
-    readLedsFromSerial();
-    FastLED.show();
+    readSerialAndShow();
   } else {
     party_wheel();
   }
 }
 
+void readSerialAndShow() {
+    readMetaData();
+    readLedsFromSerial();
+    FastLED.show();
+    
+}
+
 void party_wheel() {
   for (int i = 0; i < 256; i++) {   // 3 cycles of all 256 colors in the wheel
-    if (Serial.available()) {
+    if (Serial.available() >= 3) {
       return;
     }
-
 
     for (int j = 0; j < LEDS_PER_CHANNEL; j++) {
       for (int k = 0; k < NUM_CHANNELS; k++) {

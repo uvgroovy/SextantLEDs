@@ -49,10 +49,9 @@ void setup()
 
   minim = new Minim(this);
   println(Serial.list());
-  port = new Serial(this, Serial.list()[2],115200); //set baud rate
+  port = new Serial(this, Serial.list()[0],115200); //set baud rate
  
-  myLEDs = new WS2801(port, NUM_LEDS);
- 
+  myLEDs = new WS2801(port, NUM_LEDS); //<>//
   in = minim.getLineIn(Minim.MONO,buffer_size,sample_rate);
  
   // create an FFT object that has a time-domain buffer 
@@ -73,7 +72,7 @@ void draw()
 for(int k=0; k<16; k++){
 freq_array[k] = 0;
 }
-
+/*
   // perform a forward FFT on the samples in input buffer
   fft.forward(in.mix);
   
@@ -95,7 +94,7 @@ freq_array[k] = 0;
   freq_height[14] = fft.calcAvg((float) 3001, (float) 4100);
   freq_height[15] = fft.calcAvg((float) 4101, (float) 5600);
    
-
+*/
 // Amplitude Ranges  if else tree
   for(int j=0; j<16; j++){    
     if (freq_height[j] < 200000 && freq_height[j] > 200){freq_array[j] = 16;}
@@ -134,16 +133,30 @@ freq_array[k] = 0;
      
      if(red<0) red = 0; if(green<0) green = 0; if(blue<0) blue = 0;
      
-   //println(red + " " + green + " " + blue);
+   println(red + " " + green + " " + blue);
       
     
-    
+    background(red,green,blue);
     
     for(int i=0; i < NUM_LEDS; i++){
-      LEDARRAY[i] = ((byte)red << 16 & 0xFF0000) | ((byte)green  << 8 & 0x00FF00) | ((byte)blue & 0x0000FF);
+    //  LEDARRAY[i] = ((byte)red << 16 & 0xFF0000) | ((byte)green  << 8 & 0x00FF00) | ((byte)blue & 0x0000FF);
+    switch(i%3) {
+     case 0:
+       LEDARRAY[i] = ((byte)red << 16 & 0xFF0000);
+       break;
+     case 1:
+       LEDARRAY[i] = ((byte)green  << 8 & 0x00FF00);
+       break;
+     case 2:
+       LEDARRAY[i] = ((byte)blue & 0x0000FF);
+       break;
+    }
+    
       }
+      println("re-");
     myLEDs.refresh(LEDARRAY);  
   
+      println("-fresh");
   //print("\n");
   //delay(2); //delay for safety
 }
@@ -157,5 +170,3 @@ void stop()
  
   super.stop();
 }
-
-

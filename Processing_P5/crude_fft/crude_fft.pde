@@ -4,14 +4,14 @@
   * Run an FFT on live line-in input, splits into 16 frequency bands, and send this data to an Arduino in 16 byte packets.
   * Based on http://processing.org/learning/libraries/forwardfft.html by ddf.
   */
- 
+
 import ddf.minim.analysis.*;
 import ddf.minim.*;
 import processing.serial.*; //library for serial communication
-import ws2801.*; 
- 
+import ws2801.*;
+
 Serial port; //creates object "port" of serial class
- 
+
 Minim minim;
 AudioInput in;
 FFT fft;
@@ -50,11 +50,11 @@ void setup()
   minim = new Minim(this);
   println(Serial.list());
   port = new Serial(this, Serial.list()[0],115200); //set baud rate
- 
+
   myLEDs = new WS2801(port, NUM_LEDS); //<>//
   in = minim.getLineIn(Minim.MONO,buffer_size,sample_rate);
- 
-  // create an FFT object that has a time-domain buffer 
+
+  // create an FFT object that has a time-domain buffer
   // the same size as line-in's sample buffer
   fft = new FFT(in.bufferSize(), in.sampleRate());
   // Tapered window important for log-domain display
@@ -69,11 +69,11 @@ void setup()
 
 void draw()
 {
-  
+
   // perform a forward FFT on the samples in input buffer
   fft.forward(in.mix);
-  
-// Frequency Band Ranges      
+
+// Frequency Band Ranges
   freq_height[0] = fft.calcAvg((float) 0, (float) 50);
   freq_height[1] = fft.calcAvg((float) 51, (float) 69);
   freq_height[2] = fft.calcAvg((float) 70, (float) 94);
@@ -90,10 +90,10 @@ void draw()
   freq_height[13] = fft.calcAvg((float) 2201, (float) 3000);
   freq_height[14] = fft.calcAvg((float) 3001, (float) 4100);
   freq_height[15] = fft.calcAvg((float) 4101, (float) 5600);
-   
+
 
 // Amplitude Ranges  if else tree
-  for(int j=0; j<16; j++){    
+  for(int j=0; j<16; j++){
     if (freq_height[j] < 200000 && freq_height[j] > 200){freq_array[j] = 16;}
     else{ if (freq_height[j] <= 300 && freq_height[j] > 150){freq_array[j] = 15;}
     else{ if (freq_height[j] <= 250 && freq_height[j] > 125){freq_array[j] = 14;}
@@ -115,26 +115,21 @@ void draw()
 
   //send to serial
   //port.write(0xff); //write marker (0xff) for synchronization
-  
+
     //for(i=0; i<16; i++){
     //port.write((byte)(freq_array[i]));
     //print((byte)(freq_array[i]));
-    
+
     red = (byte)(red - 5);  if(red<0) red = 0;
     green = (byte)(green - 100);  if(green<0) green = 0;
     blue = (byte)(blue - 100);  if(blue<0) blue = 0;
-    
+
     red += (  ((byte)(freq_array[0])*2) + ((byte)(freq_array[1])*3) + ((byte)(freq_array[3])*4) + ((byte)(freq_array[4])*5) + ((byte)(freq_array[5])*6)       );
   green += (  ((byte)(freq_array[6])*2) + ((byte)(freq_array[7])*3) + ((byte)(freq_array[8])*10) + ((byte)(freq_array[9])*10) + ((byte)(freq_array[10])*10)      );
    blue += (  ((byte)(freq_array[11])*10) + ((byte)(freq_array[12])*10) + ((byte)(freq_array[13])*10) + ((byte)(freq_array[14])*10) + ((byte)(freq_array[15])*10)  );
-     
+
      if(red<0) red = 0; if(green<0) green = 0; if(blue<0) blue = 0;
-     
-   println(red + " " + green + " " + blue);
-      
-    
-    background(red,green,blue);
-    
+
     for(int i=0; i < NUM_LEDS; i++){
     //  LEDARRAY[i] = ((byte)red << 16 & 0xFF0000) | ((byte)green  << 8 & 0x00FF00) | ((byte)blue & 0x0000FF);
     switch(i%3) {
@@ -148,22 +143,20 @@ void draw()
        LEDARRAY[i] = ((byte)blue & 0x0000FF);
        break;
     }
-    
+
       }
-      println("re-");
-    myLEDs.refresh(LEDARRAY);  
+    myLEDs.refresh(LEDARRAY);
   
-      println("-fresh");
   //print("\n");
   //delay(2); //delay for safety
 }
- 
- 
+
+
 void stop()
 {
   // always close Minim audio classes when you finish with them
   in.close();
   minim.stop();
- 
+
   super.stop();
 }

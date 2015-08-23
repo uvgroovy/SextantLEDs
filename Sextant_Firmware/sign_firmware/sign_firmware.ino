@@ -28,7 +28,7 @@ int letterRanges[NUMLETTERS][2] = {
   {3, 4},
   {4, 5},
   {5, 6},
-  {6, 6},
+  {6, 7},
 };
 
 inline CRGB color(byte r, byte g, byte b) {
@@ -61,8 +61,6 @@ void setup() {
   FastLED.show();
 }
 
-typedef void (*Animation)();
-Animation animations[] = {animation1, animation2};
 
 
 void animation1() {
@@ -77,19 +75,67 @@ void animation1() {
 
 void animation2() {
 
+  for (int i = 0; i < NUMLETTERS; i ++) {
+    letterWipe(i, 0);
+  }
+  FastLED.show();
+
+  for (int i = 0; i < NUMLETTERS; i ++) {
+    if (i > 0) {
+      letterWipe(i - 1, 0);
+
+    }
+    letterWipe(i, wheel(i * 20));
+    FastLED.show();
+    delay(500);
+  }
+
+}
+
+
+void animation3() {
+
   for (int j = 0 ; j < 256; ++j) {
     for (int i = 0; i < NUMLETTERS; i ++) {
-      if (i > 0) {
-        letterWipe(i - 1, 0);
-
-      }
-      letterWipe(i, wheel(j));
-      FastLED.show();
-      delay(10);
+      letterWipe(i, wheel(j + i * 20));
     }
+    FastLED.show();
+    delay(10);
   }
 }
 
+
+void animation4() {
+  const CRGB initialColor = color(255, 0, 0);
+  const int steps = 100;
+  const int deltaTime = 10;
+  for (int i = 0; i < NUMLETTERS; i ++) {
+    letterWipe(i, 0);
+  }
+  letterWipe(0, initialColor);
+
+  FastLED.show();
+
+  for (int i = 1; i < NUMLETTERS; i ++) {
+    for (int j = 0; j <= steps; ++j) {
+      float r = j * 1.0 / steps;
+      const CRGB firstColor = color(255 * (1 - r), 0, 0);
+      const CRGB secondColor = color(255 * r, 0, 0);
+
+      letterWipe(i - 1, firstColor);
+      letterWipe(i, secondColor);
+      FastLED.show();
+      delay(deltaTime);
+    }
+  }
+
+}
+
+
+typedef void (*Animation)();
+Animation animations[] = {animation1, animation2, animation3, animation4};
+
+//Animation animations[] = { animation4};
 void loop() {
 
   animations[random(ARRAY_SIZE(animations))]();

@@ -91,26 +91,10 @@ TODO
  - start it as a service
  - export var in bashrc
 
-## Setup PI WiFi in AP mode - Optional
-See: https://learn.adafruit.com/downloads/pdf/setting-up-a-raspberry-pi-as-a-wifi-access-point.pdf
-
-Connect to pi from serial or ethernet while setting this up
-
-Make sure that you edit these files according to the guide:
-- /etc/dhcp/dhcpd.conf
-- /etc/default/isc-dhcp-server
-- /etc/network/interfaces
-- /etc/hostapd/hostapd.conf
-- /etc/default/hostapd
-
-and dont forget to enable the services in the end.
-
-You may need to replace hostapt binary.
-
-You can skip the "Configure Network Address Translation" part in the toturial.
-if are doing that, make sure you edit these files:
-- /etc/sysctl.conf
-- /etc/network/interfaces
+## Netowrk the PI
+Get a cheap wifi router and set it up.
+in the pi, edit "/etc/wpa_supplicant/wpa_supplicant.conf"
+and add your network.
 
 ## Sextant code
 

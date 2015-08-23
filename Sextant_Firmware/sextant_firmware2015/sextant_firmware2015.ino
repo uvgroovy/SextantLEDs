@@ -2,8 +2,8 @@
 
 #define ARRAY_SIZE(x) (sizeof(x)/sizeof(x[0]))
 
-// #define PARTY_TYPE 0    //relax color wheel fade
-#define PARTY_TYPE 1  //sparkle party!
+#define PARTY_TYPE 0    //relax color wheel fade
+// #define PARTY_TYPE 1  //sparkle party!
 
 
 #define LEDS_PER_CHANNEL 500     //per channel  
@@ -84,6 +84,7 @@ void readMetaData() {
     return;
   }
 
+  // read metadata; we don't need it so we ignore it
   Serial.read();
   Serial.read();
   Serial.read();
@@ -97,7 +98,7 @@ void readLedsFromSerial() {
       for (int timeout = 0; (Serial.available() < 3) && (timeout < 10); ++timeout) {
         delay(10);
       }
-      // enough to read the LEDs
+      // enough to read the r,g,b values for LED
       if (Serial.available() < 3)  {
         return;
       }

@@ -18,9 +18,9 @@ void setup() {
 
   //size(arrayWidth * imgScale, arrayHeight * imgScale, JAVA2D);
   colorMode(HSB);
-  
+
   //leap = new LeapMotionP5(this);
-  port = new Serial(this, Serial.list()[2], 115200);
+  port = new Serial(this, Serial.list()[0], 115200);
   myLEDs = new WS2801(port, arrayWidth * arrayHeight);
 
 
@@ -29,15 +29,14 @@ void setup() {
     WS2801.START_TOP | WS2801.START_LEFT | WS2801.ROW_MAJOR);
 }
 
-void draw() {  
+void draw() {
 	for(int i=0; i < 200; i++)
 		LEDARRAY[int(random(arrayWidth*arrayHeight))] = 0xFFFFFF;
 	myLEDs.refresh(LEDARRAY);
 	//delay(100);
-	
+
 	for(int i=0; i<arrayWidth*arrayHeight; i++)
 		LEDARRAY[i] = 0x000000;
-	
+
 	myLEDs.refresh(LEDARRAY);
 	//delay(100);
-  

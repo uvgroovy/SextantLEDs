@@ -20,7 +20,7 @@ upgrade to latest everything:
 My USB3 hub didn't seem to work with the PI; the solution is to use it in USB 1.1 mode.
 do that by adding "dwc_otg.speed=1" to /boot/command.txt
 
-# may not be needed on other hubs
+it may not be needed on other hubs so only do this if your hub doesn't work.
 see https://github.com/raspberrypi/firmware/issues/64 for more info
 ## Setting up mic
 see: http://www.g7smy.co.uk/?p=283
@@ -56,7 +56,7 @@ sudo mv 49-teensy.rules /etc/udev/rules.d/
 ## setting up processing
 see: http://scruss.com/blog/2014/01/07/processing-2-1-oracle-java-raspberry-pi-serial-arduino-%E2%98%BA/
 
-Install java 7 (java 8 didn't work!)
+Install java 7 (java 8 doesn't work!)
 
     sudo apt-get install oracle-java7-jdk
 
@@ -85,7 +85,32 @@ Start it
     Xvfb :1 -screen 0 1152x900x8 -fbdir /tmp &
     export DISPLAY=localhost:1.0
 
-if you start another terminal, you just need to export the env var again.
+If you start another terminal, you just need to export the env var again.
+
+TODO
+ - start it as a service
+ - export var in bashrc
+
+## Setup PI WiFi in AP mode - Optional
+See: https://learn.adafruit.com/downloads/pdf/setting-up-a-raspberry-pi-as-a-wifi-access-point.pdf
+
+Connect to pi from serial or ethernet while setting this up
+
+Make sure that you edit these files according to the guide:
+- /etc/dhcp/dhcpd.conf
+- /etc/default/isc-dhcp-server
+- /etc/network/interfaces
+- /etc/hostapd/hostapd.conf
+- /etc/default/hostapd
+
+and dont forget to enable the services in the end.
+
+You may need to replace hostapt binary.
+
+You can skip the "Configure Network Address Translation" part in the toturial.
+if are doing that, make sure you edit these files:
+- /etc/sysctl.conf
+- /etc/network/interfaces
 
 ## Sextant code
 

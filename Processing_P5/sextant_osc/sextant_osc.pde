@@ -23,15 +23,15 @@ boolean go = true;
 
 void setup() {
 	println(Serial.list());
-	port = new Serial(this, Serial.list()[2], 115200);
+	port = new Serial(this, Serial.list()[0], 115200);
 	myLEDs = new WS2801(port, NUM_LEDS);
 	oscP5 = new OscP5(this,12000);
 	myRemoteLocation = new NetAddress("127.0.0.1",12000);
-	
+
 	// Generate zigzag remap array to reconstitute image into LED order.
 	//remap = myLEDs.zigzag(NUM_LEDS,
 	// WS2801.START_TOP | WS2801.START_LEFT | WS2801.ROW_MAJOR);
-	
+
 	oscP5.plug(this,"redChan","/red");
 	oscP5.plug(this,"greenChan","/green");
 	oscP5.plug(this,"blueChan","/blue");
@@ -42,42 +42,42 @@ void setup() {
 
 public void buttonstop()
   {
-  println("button toggle!");  
+  println("button toggle!");
   go = !go;
   }
-  
+
 
 
 public void redChan(float hexval)
   {
-  println(" 1 int received: "+ hexval);  
+  println(" 1 int received: "+ hexval);
   red = byte(hexval);
   println("red: " + hexval);
   }
-  
-  
+
+
   public void greenChan(float hexval)
   {
-  println(" 1 int received: "+ hexval);  
+  println(" 1 int received: "+ hexval);
   green = byte(hexval);
-  
-  
-  
+
+
+
   println("green: " + hexval);
   }
-  
-  
+
+
   public void blueChan(float hexval)
   {
-  println(" 1 int received: "+ hexval);  
+  println(" 1 int received: "+ hexval);
   blue = byte(hexval);
   println("blue: " + hexval);
   }
-  
-  
+
+
   public void delayVal(float hexval)
   {
-  println(" 1 int received: "+ hexval);  
+  println(" 1 int received: "+ hexval);
   delay = int(hexval);
   println("delay: " + hexval);
   }
@@ -95,10 +95,10 @@ void draw() {
 /* incoming osc message are forwarded to the oscEvent method. */
 void oscEvent(OscMessage theOscMessage) {
   /* with theOscMessage.isPlugged() you check if the osc message has already been
-   * forwarded to a plugged method. if theOscMessage.isPlugged()==true, it has already 
-   * been forwared to another method in your sketch. theOscMessage.isPlugged() can 
+   * forwarded to a plugged method. if theOscMessage.isPlugged()==true, it has already
+   * been forwared to another method in your sketch. theOscMessage.isPlugged() can
    * be used for double posting but is not required.
-  */  
+  */
 	if(theOscMessage.isPlugged()==false) {
 		/* print the address pattern and the typetag of the received OscMessage */
 		println("### received an osc message.");
@@ -106,4 +106,3 @@ void oscEvent(OscMessage theOscMessage) {
 		println("### typetag\t"+theOscMessage.typetag());
 		}
 }
-

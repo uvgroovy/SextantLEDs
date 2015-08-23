@@ -69,10 +69,7 @@ void setup()
 
 void draw()
 {
-for(int k=0; k<16; k++){
-freq_array[k] = 0;
-}
-/*
+  
   // perform a forward FFT on the samples in input buffer
   fft.forward(in.mix);
   
@@ -94,7 +91,7 @@ freq_array[k] = 0;
   freq_height[14] = fft.calcAvg((float) 3001, (float) 4100);
   freq_height[15] = fft.calcAvg((float) 4101, (float) 5600);
    
-*/
+
 // Amplitude Ranges  if else tree
   for(int j=0; j<16; j++){    
     if (freq_height[j] < 200000 && freq_height[j] > 200){freq_array[j] = 16;}

@@ -2,10 +2,6 @@
 
 #define ARRAY_SIZE(x) (sizeof(x)/sizeof(x[0]))
 
-#define PARTY_TYPE 0    //relax color wheel fade
-// #define PARTY_TYPE 1  //sparkle party!
-
-
 #define LEDS_PER_CHANNEL 500     //per channel  
 #define NUM_CHANNELS 4
 #define LED 13       //good for visual status
@@ -18,6 +14,18 @@ CRGB channel3[LEDS_PER_CHANNEL];
 CRGB channel4[LEDS_PER_CHANNEL];
 
 CRGB* channels[NUM_CHANNELS] {channel1, channel2, channel3, channel4};
+
+uint8_t gammaFilter[256] = {0};
+
+void setGamma(double gamma) {
+  const int minGammaValue = 0;
+  const int maxGammaValue = 255;
+  const int range = maxGammaValue - minGammaValue;
+  for (int i = 0; i < 256; i ++) {
+    float d = (float)i / 255.0;
+    gammaFilter[i] = (byte)( minGammaValue + (int)(range * pow(d, gamma) + 0.5));
+  }
+}
 
 // letter ranges
 // start and end index for each letter
@@ -52,6 +60,7 @@ void setup() {
   FastLED.addLeds<WS2801, 8 , 5 , RGB, DATA_RATE_MHZ(3)>(channel3, ARRAY_SIZE(channel3));
   FastLED.addLeds<WS2801, 3 , 1 , RGB, DATA_RATE_MHZ(3)>(channel4, ARRAY_SIZE(channel4));
 
+  setGamma(2.5);
 
   for (int i = 0; i < NUM_CHANNELS; i++) {
     for (int j = 0; j < LEDS_PER_CHANNEL; j++) {
@@ -119,8 +128,11 @@ void animation4() {
   for (int i = 1; i < NUMLETTERS; i ++) {
     for (int j = 0; j <= steps; ++j) {
       float r = j * 1.0 / steps;
-      const CRGB firstColor = color(255 * (1 - r), 0, 0);
-      const CRGB secondColor = color(255 * r, 0, 0);
+      uint8_t c1 = gammaFilter[int(255 * (1 - r))];
+      uint8_t c2 = gammaFilter[int(255 * r)];
+
+      const CRGB firstColor = color(c1, 0, 0);
+      const CRGB secondColor = color(c2 * r, 0, 0);
 
       letterWipe(i - 1, firstColor);
       letterWipe(i, secondColor);

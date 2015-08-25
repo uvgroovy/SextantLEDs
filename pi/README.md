@@ -7,6 +7,7 @@ add the pi user to to audio group; we will need this for later
     sudo usermod -a -G audio pi
 
 
+
 expand file system with:
 
     sudo raspi-config
@@ -99,9 +100,15 @@ TODO
 
 ## Netowrk the PI
 Get a cheap wifi router and set it up.
-in the pi, edit "/etc/wpa_supplicant/wpa_supplicant.conf"
+in the pi, edit */etc/wpa_supplicant/wpa_supplicant.conf*
 and add your network.
 
+    network={
+        ssid="The_ESSID_from_earlier"
+        psk="Your_wifi_password"
+    }
+
+see: https://www.raspberrypi.org/documentation/configuration/wireless/wireless-cli.md
 ## Sextant code
 
 get sextant code
@@ -118,9 +125,10 @@ Copy processing libraries
     wget http://dave.cheney.net/paste/go1.4.2.linux-arm~multiarch-armv6-1.tar.gz
     tar xzf go1.4.2.linux-arm~multiarch-armv6-1.tar.gz
     cat <<EOF >> .bashrc
-    export GOROOT=$HOME/go
-    export PATH=$PATH:$GOROOT/bin
-    export GOPATH=$HOME/gowork
+    export GOROOT=\$HOME/go
+    export PATH=\$PATH:\$GOROOT/bin
+    export GOPATH=\$HOME/gowork
+    export GOBIN=\$GOPATH/bin
     EOF
 
     mkdir gowork
@@ -128,10 +136,11 @@ Copy processing libraries
     sudo apt-get install -y libusb-dev
     go get github.com/uvgroovy/go-libusb
     go get github.com/uvgroovy/dmx
-    go build github.com/uvgroovy/dmx/dmxd
+    go install github.com/uvgroovy/dmx/dmxd/
 
 binary will be in
-    ~/gowork/src/github.com/uvgroovy/dmx/dmxd/dmxd
+
+    ~/gowork/bin/dmxd
 
 # Done!
 Everything should be setup now; plugin teensty and to the pi, and try:

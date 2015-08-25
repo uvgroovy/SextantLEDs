@@ -50,8 +50,9 @@ Try test recording with:
     arecord -D plughw:1 --duration=10 -f cd -vv ~/rectest.wav
 
 ## add teensy udev rulels
-wget http://www.pjrc.com/teensy/49-teensy.rules
-sudo mv 49-teensy.rules /etc/udev/rules.d/
+
+    wget http://www.pjrc.com/teensy/49-teensy.rules
+    sudo mv 49-teensy.rules /etc/udev/rules.d/
 
 ## setting up processing
 see: http://scruss.com/blog/2014/01/07/processing-2-1-oracle-java-raspberry-pi-serial-arduino-%E2%98%BA/
@@ -87,6 +88,11 @@ Start it
 
 If you start another terminal, you just need to export the env var again.
 
+setup the startup script
+
+    sudo cp SextantLEDs/pi/xvfb /etc/init.d
+    sudo chmod +x /etc/init.d/xvfb
+    sudo update-rc.d xvfb enable
 TODO
  - start it as a service
  - export var in bashrc
@@ -106,6 +112,26 @@ Copy processing libraries
 
     mkdir -p sketchbook/libraries/
     cp -r  SextantLEDs/Processing_P5/libs/* sketchbook/libraries/
+
+## Go code for DMX controller
+
+    wget http://dave.cheney.net/paste/go1.4.2.linux-arm~multiarch-armv6-1.tar.gz
+    tar xzf go1.4.2.linux-arm~multiarch-armv6-1.tar.gz
+    cat <<EOF >> .bashrc
+    export GOROOT=$HOME/go
+    export PATH=$PATH:$GOROOT/bin
+    export GOPATH=$HOME/gowork
+    EOF
+
+    mkdir gowork
+    . .bashrc
+    sudo apt-get install -y libusb-dev
+    go get github.com/uvgroovy/go-libusb
+    go get github.com/uvgroovy/dmx
+    go build github.com/uvgroovy/dmx/dmxd
+
+binary will be in
+    ~/gowork/src/github.com/uvgroovy/dmx/dmxd/dmxd
 
 # Done!
 Everything should be setup now; plugin teensty and to the pi, and try:

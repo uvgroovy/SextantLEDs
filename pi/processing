@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# run Xvfg for processing.
+# if it is already running it will exit with an error. we ignore that.
+nohup Xvfb :1 -screen 0 1152x900x8 -fbdir /tmp > /dev/null &
+
+export DISPLAY=localhost:1.0
+
+if [[ $# -eq 0 ]] ; then
+	echo 'Choose command from:'
+	ls -1 /home/pi/SextantLEDs/Processing_P5/
+	exit 0
+fi
+
+
+
+
+# killall prevous ones
+killall java
+
+~/processing-2.2.1/processing-java  --sketch=/home/pi/SextantLEDs/Processing_P5/$1  --output=/tmp/output --force --run
+

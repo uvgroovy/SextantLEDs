@@ -86,7 +86,7 @@ void draw() {
 
 	for(int i=0; i < NUM_LEDS; i++)
 		LEDARRAY[i] = ((byte)red << 16 & 0xFF0000) | ((byte)green << 8 & 0x00FF00) | ((byte)blue & 0x0000FF);
-	myLEDs.refresh(LEDARRAY);
+//	myLEDs.refresh(LEDARRAY);
 
 	if(go)
 		myLEDs.refresh(LEDARRAY);

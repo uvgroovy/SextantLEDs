@@ -19,7 +19,7 @@ upgrade to latest everything:
     sudo rpi-update
 ## Optional - powered usb hub
 My USB3 hub didn't seem to work with the PI; the solution is to use it in USB 1.1 mode.
-do that by adding "dwc_otg.speed=1" to /boot/command.txt
+do that by adding "dwc_otg.speed=1" to /boot/cmdline.txt
 
 it may not be needed on other hubs so only do this if your hub doesn't work.
 see https://github.com/raspberrypi/firmware/issues/64 for more info

@@ -15,6 +15,31 @@ CRGB channel4[LEDS_PER_CHANNEL];
 
 CRGB* channels[NUM_CHANNELS] {channel1, channel2, channel3, channel4};
 
+
+
+
+inline CRGB color(byte r, byte g, byte b) {
+  return  ((r << 16) & 0xFF0000) | ((g << 8) & 0x00FF00) | (b & 0x0000FF);
+}
+
+inline void colorSet(byte channel, int index, byte r, byte g, byte b) {
+  colorSet(channel, index, color(r, g, b));
+}
+
+inline void colorSet(byte channel, int index, CRGB color) {
+  channels[channel][index] = color;
+}
+
+
+const CRGB RED    = color(255,   0,   0);
+const CRGB ORANGE = color(255, 112,  44);
+const CRGB YELLOW = color(255, 237,  27);
+const CRGB GREEN  = color(177,  78,   0);
+const CRGB LBLUE  = color(  0, 166, 228);
+const CRGB BLUE   = color( 51,  79, 202);
+const CRGB PURPLE = color(177,  72, 162);
+
+
 uint8_t gammaFilter[256] = {0};
 
 void setGamma(double gamma) {
@@ -39,17 +64,6 @@ int letterRanges[NUMLETTERS][2] = {
   {6, 7},
 };
 
-inline CRGB color(byte r, byte g, byte b) {
-  return  ((r << 16) & 0xFF0000) | ((g << 8) & 0x00FF00) | (b & 0x0000FF);
-}
-
-inline void colorSet(byte channel, int index, byte r, byte g, byte b) {
-  colorSet(channel, index, color(r, g, b));
-}
-
-inline void colorSet(byte channel, int index, CRGB color) {
-  channels[channel][index] = color;
-}
 
 void setup() {
   pinMode(LED, OUTPUT);
@@ -114,7 +128,7 @@ void animation3() {
 }
 
 
-void animation4() {
+void flowingRed() {
   const CRGB initialColor = color(255, 0, 0);
   const int steps = 100;
   const int deltaTime = 10;
@@ -143,15 +157,86 @@ void animation4() {
 
 }
 
+void blinkLetter(int letter, int times, CRGB color = 0, int delayTime = 150) {
+  color = (color != CRGB(0)) ? color : getLetterColor(letter);
+  for (int i = 0; i < times; ++i) {
+    letterWipe(letter, color);
+    delay(delayTime);
+
+    letterWipe(letter, 0);
+    delay(delayTime);
+  }
+}
+
+void brokenNeonSign() {
+
+}
+
+// shal tiri
+void conversation() {
+
+  // hi
+  blinkLetter(6, 3);
+  delay(200);
+  // hello
+  blinkLetter(0, 4);
+  delay(200);
+  // whats' up?
+  blinkLetter(6, 2);
+  delay(200);
+  // Doing well how are you?
+  blinkLetter(0, 6);
+  delay(200);
+  // good!
+  blinkLetter(6, 1);
+  delay(100);
+  // lets party!
+  blinkLetter(6, 3);
+  // ok!
+  blinkLetter(0, 2);
+
+  // everyone parties
+  for (int i = 0; i < 100; i++) {
+    for (int j = 0; j < NUMLETTERS; j++) {
+      bool letterOn = random(NUMLETTERS) % 2;
+      CRGB color = letterOn ? getLetterColor(j) : CRGB(0);
+      letterWipe(j, color);
+    }
+    delay(100);
+  }
+
+}
+
+CRGB getLetterColor(int letter) {
+  switch (letter) {
+    case 0:
+      return RED;
+    case 1:
+      return ORANGE;
+    case 2:
+      return YELLOW;
+    case 3:
+      return GREEN;
+    case 4:
+      return LBLUE;
+    case 5:
+      return BLUE;
+    case 6:
+      return PURPLE;
+  }
+  return 0;
+}
+
 
 typedef void (*Animation)();
-Animation animations[] = {animation1, animation2, animation3, animation4};
+Animation animations[] = {animation1, animation2, animation3, flowingRed};
 
 //Animation animations[] = { animation4};
 void loop() {
 
   animations[random(ARRAY_SIZE(animations))]();
 }
+
 
 void letterWipe(int letter, CRGB color) {
 

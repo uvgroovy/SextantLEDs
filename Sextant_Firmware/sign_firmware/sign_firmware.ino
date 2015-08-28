@@ -15,9 +15,6 @@ CRGB channel4[LEDS_PER_CHANNEL];
 
 CRGB* channels[NUM_CHANNELS] {channel1, channel2, channel3, channel4};
 
-
-
-
 inline CRGB color(byte r, byte g, byte b) {
   return  ((r << 16) & 0xFF0000) | ((g << 8) & 0x00FF00) | (b & 0x0000FF);
 }
@@ -75,7 +72,7 @@ void setup() {
   FastLED.addLeds<WS2801, 3 , 1 , RGB, DATA_RATE_MHZ(3)>(channel4, ARRAY_SIZE(channel4));
 
   setGamma(2.5);
-
+;
   for (int i = 0; i < NUM_CHANNELS; i++) {
     for (int j = 0; j < LEDS_PER_CHANNEL; j++) {
       colorSet(i, j, 0, 0, 0);
@@ -164,9 +161,11 @@ void blinkLetter(int letter, int times, int delayTimeOn = 150, int delayTimeOff 
 
   for (int i = 0; i < times; ++i) {
     letterWipe(letter, color);
+    FastLED.show();
     delay(delayTimeOn);
 
     letterWipe(letter, 0);
+    FastLED.show();
     delay(delayTimeOff);
   }
 }
@@ -210,7 +209,7 @@ void conversation() {
 
 }
 
-
+//////////////////////////////// morse
 void talk(int letter, const char* words) {
 
   for (int i = 0; words[i] != '\0'; ++i) {
@@ -220,60 +219,67 @@ void talk(int letter, const char* words) {
 }
 
 #define DOT_TIME 100
-#define DASH_TIME (2*DOT_TIME)
-#define SPACE_TIME (2*DOT_TIME)
+#define DASH_TIME (3*DOT_TIME)
+#define INNER_GAP (DOT_TIME)
+#define SHORT_GAP (3*DOT_TIME)
+#define LONG_GAP (7*DOT_TIME)
 
 const char* morsecodes[] = {
-  "", //a
-  "", //b
-  "", //c
-  "", //d
+  ".-", //a
+  "-...", //b
+  "-.-.", //c
+  "-..", //d
   ".", //e
-  "", //f
-  "", //g
-  "", //h
-  "", //i
-  "", //j
-  "", //k
-  "", //l
-  "", //m
-  "", //n
+  "..-.", //f
+  "--.", //g
+  "...", //h
+  "..", //i
+  ".---", //j
+  "-.-", //k
+  ".-..", //l
+  "--", //m
+  "-.", //n
   "---", //o
-  "", //p
-  "", //q
-  "", //r
+  ".--.", //p
+  "--.-", //q
+  ".-.", //r
   "...", //s
-  "", //t
-  "", //u
-  "", //v
-  "", //w
-  "", //x
-  "", //y
-  "", //z
-  
-  };
+  "-", //t
+  "..-", //u
+  "...-", //v
+  ".--", //w
+  "-..-", //x
+  "-.--", //y
+  "--..", //z
+};
 
 void letter_morse(int letter, char ch) {
   ch = tolower(ch);
   int codeIndex = ch - 'a';
 
+  if (ch == ' ') {
+    delay(LONG_GAP);
+    return;
+  }
+
   if ((codeIndex >= 0) && (codeIndex <= 26) ) {
     const char* letterMorseCode = morsecodes[codeIndex];
     for (int i = 0; letterMorseCode[i] != '\0'; ++i) {
       if (letterMorseCode[i] == '.' ) {
-        blinkLetter(letter, 1, DOT_TIME, DOT_TIME);
+        blinkLetter(letter, 1, DOT_TIME, INNER_GAP);
       } else {
-        blinkLetter(letter, 1, DASH_TIME, DOT_TIME);
+        blinkLetter(letter, 1, DASH_TIME, INNER_GAP);
       }
     }
 
   } else {
-    delay(SPACE_TIME);
+    delay(SHORT_GAP);
   }
 
 
 }
 
+// tal shiri
 void conversationMorse() {
 
   talk(6, "hi ");
@@ -296,6 +302,10 @@ void conversationMorse() {
 
 }
 
+///////////////////////// end morse
+
+
+//////////////////////// colors match sextant fb page
 CRGB getLetterColor(int letter) {
   switch (letter) {
     case 0:

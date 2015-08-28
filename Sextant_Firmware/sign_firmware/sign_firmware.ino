@@ -157,14 +157,17 @@ void flowingRed() {
 
 }
 
-void blinkLetter(int letter, int times, CRGB color = 0, int delayTime = 150) {
+void blinkLetter(int letter, int times, int delayTimeOn = 150, int delayTimeOff = -1,  CRGB color = 0) {
   color = (color != CRGB(0)) ? color : getLetterColor(letter);
+
+  delayTimeOff = (delayTimeOff < 0) ? delayTimeOn : delayTimeOff;
+
   for (int i = 0; i < times; ++i) {
     letterWipe(letter, color);
-    delay(delayTime);
+    delay(delayTimeOn);
 
     letterWipe(letter, 0);
-    delay(delayTime);
+    delay(delayTimeOff);
   }
 }
 
@@ -207,6 +210,92 @@ void conversation() {
 
 }
 
+
+void talk(int letter, const char* words) {
+
+  for (int i = 0; words[i] != '\0'; ++i) {
+    letter_morse(i, words[i]);
+  }
+
+}
+
+#define DOT_TIME 100
+#define DASH_TIME (2*DOT_TIME)
+#define SPACE_TIME (2*DOT_TIME)
+
+const char* morsecodes[] = {
+  "", //a
+  "", //b
+  "", //c
+  "", //d
+  ".", //e
+  "", //f
+  "", //g
+  "", //h
+  "", //i
+  "", //j
+  "", //k
+  "", //l
+  "", //m
+  "", //n
+  "---", //o
+  "", //p
+  "", //q
+  "", //r
+  "...", //s
+  "", //t
+  "", //u
+  "", //v
+  "", //w
+  "", //x
+  "", //y
+  "", //z
+  
+  };
+
+void letter_morse(int letter, char ch) {
+  ch = tolower(ch);
+  int codeIndex = ch - 'a';
+
+  if ((codeIndex >= 0) && (codeIndex <= 26) ) {
+    const char* letterMorseCode = morsecodes[codeIndex];
+    for (int i = 0; letterMorseCode[i] != '\0'; ++i) {
+      if (letterMorseCode[i] == '.' ) {
+        blinkLetter(letter, 1, DOT_TIME, DOT_TIME);
+      } else {
+        blinkLetter(letter, 1, DASH_TIME, DOT_TIME);
+      }
+    }
+
+  } else {
+    delay(SPACE_TIME);
+  }
+
+
+}
+
+void conversationMorse() {
+
+  talk(6, "hi ");
+  talk(0, "hello ");
+  talk(6, "whats' up?");
+  talk(0, "Doing well stop how are you");
+  talk(6, "good");
+  talk(0, "lets party");
+  talk(6, "ok");
+
+  // everyone parties
+  for (int i = 0; i < 100; i++) {
+    for (int j = 0; j < NUMLETTERS; j++) {
+      bool letterOn = random(NUMLETTERS) % 2;
+      CRGB color = letterOn ? getLetterColor(j) : CRGB(0);
+      letterWipe(j, color);
+    }
+    delay(100);
+  }
+
+}
+
 CRGB getLetterColor(int letter) {
   switch (letter) {
     case 0:
@@ -229,7 +318,7 @@ CRGB getLetterColor(int letter) {
 
 
 typedef void (*Animation)();
-Animation animations[] = {animation1, animation2, animation3, flowingRed};
+Animation animations[] = {animation1, animation2, animation3, flowingRed, conversationMorse};
 
 //Animation animations[] = { animation4};
 void loop() {

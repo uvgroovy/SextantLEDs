@@ -72,7 +72,7 @@ void setup() {
   FastLED.addLeds<WS2801, 3 , 1 , RGB, DATA_RATE_MHZ(3)>(channel4, ARRAY_SIZE(channel4));
 
   setGamma(2.5);
-;
+  ;
   for (int i = 0; i < NUM_CHANNELS; i++) {
     for (int j = 0; j < LEDS_PER_CHANNEL; j++) {
       colorSet(i, j, 0, 0, 0);
@@ -204,16 +204,17 @@ void conversation() {
       CRGB color = letterOn ? getLetterColor(j) : CRGB(0);
       letterWipe(j, color);
     }
+    FastLED.show();
     delay(100);
   }
 
 }
 
-//////////////////////////////// morse
+///////////////////////////////////////////////////////////////////////////////////////////////// morse
 void talk(int letter, const char* words) {
 
   for (int i = 0; words[i] != '\0'; ++i) {
-    letter_morse(i, words[i]);
+    letter_morse(letter, words[i]);
   }
 
 }
@@ -281,14 +282,15 @@ void letter_morse(int letter, char ch) {
 
 // tal shiri
 void conversationMorse() {
+  for (int j = 0; j < NUMLETTERS; j++) {
+    letterWipe(j, 0);
+  }
+  FastLED.show();
 
   talk(6, "hi ");
-  talk(0, "hello ");
-  talk(6, "whats' up?");
-  talk(0, "Doing well stop how are you");
-  talk(6, "good");
+  talk(0, "hi ");
   talk(0, "lets party");
-  talk(6, "ok");
+  talk(0, "ok");
 
   // everyone parties
   for (int i = 0; i < 100; i++) {
@@ -297,12 +299,13 @@ void conversationMorse() {
       CRGB color = letterOn ? getLetterColor(j) : CRGB(0);
       letterWipe(j, color);
     }
+    FastLED.show();
     delay(100);
   }
 
 }
 
-///////////////////////// end morse
+////////////////////////////////////////////////////////////////////// end morse
 
 
 //////////////////////// colors match sextant fb page
@@ -328,9 +331,9 @@ CRGB getLetterColor(int letter) {
 
 
 typedef void (*Animation)();
-Animation animations[] = {animation1, animation2, animation3, flowingRed, conversationMorse};
+//Animation animations[] = {animation1, animation2, animation3, flowingRed, conversationMorse};
+Animation animations[] = { flowingRed};
 
-//Animation animations[] = { animation4};
 void loop() {
 
   animations[random(ARRAY_SIZE(animations))]();

@@ -36,7 +36,6 @@ inline bool maybeHasSerialHeader() {
 void setup() {
   pinMode(LED, OUTPUT);
   Serial.begin(115200);
-
   //                     DATA, CLOCK
   FastLED.addLeds<WS2801, 12, 10, RGB, DATA_RATE_MHZ(3)>(channel1, ARRAY_SIZE(channel1));
   FastLED.addLeds<WS2801, 16, 19, RGB, DATA_RATE_MHZ(3)>(channel2, ARRAY_SIZE(channel2));
@@ -57,7 +56,7 @@ bool syncSerial() {
   while (maybeHasSerialHeader()) {
     int byteRead = Serial.read();
     if (byteRead != 'A') {
-      continue;
+      continue; 
     }
     byteRead = Serial.read();
     if (byteRead != 'd') {
@@ -116,8 +115,10 @@ void readLedsFromSerial() {
 void loop() {
   // put your main code here, to run repeatedly:
   if (syncSerial()) {
+    digitalWrite(LED, HIGH);
     readSerialAndShow();
   } else {
+    digitalWrite(LED, LOW);
     party_wheel();
   }
 }
